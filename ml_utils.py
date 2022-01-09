@@ -153,7 +153,7 @@ class edaDF:
             fig3 = self.histPlots(kde=True, show=False)
             plt.show(fig3)
 
-    def doublehist(df1, df2, columnName):
+    def doublehist(self, df1, df2, columnName):
         sns.distplot(df1[columnName], color="purple")
         sns.distplot(df2[columnName], color="green")
         plt.show()
