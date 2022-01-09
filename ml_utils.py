@@ -4,8 +4,7 @@ import math
 import sklearn.datasets
 import ipywidgets as widgets
 
-##Seaborn for fancy plots. 
-#%matplotlib inline
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 plt.rcParams["figure.figsize"] = (8,8)
@@ -153,3 +152,9 @@ class edaDF:
         with out3:
             fig3 = self.histPlots(kde=True, show=False)
             plt.show(fig3)
+
+    def doublehist(df1, df2, columnName):
+        sns.distplot(df1[columnName], color="purple")
+        sns.distplot(df2[columnName], color="green")
+        plt.show()
+        return
