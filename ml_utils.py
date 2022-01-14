@@ -16,7 +16,16 @@ def sklearn_to_df(sklearn_dataset):
     return df
 
 class edaDF:
-    """
+    import pandas as pd
+    import numpy as np
+    import math
+    import ipywidgets as widgets
+
+
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    plt.rcParams["figure.figsize"] = (8,8)
+        """
     A class used to perform common EDA tasks
 
     ...
@@ -153,6 +162,11 @@ class edaDF:
             fig3 = self.histPlots(kde=True, show=False)
             plt.show(fig3)
 
+    def hist(df):
+        hists = df.hist()
+        return hists
+
+
     def doublehist(self, df1, df2, columnName):
         sns.distplot(df1[columnName], color="purple")
         sns.distplot(df2[columnName], color="green")
@@ -180,19 +194,31 @@ class edaDF:
         return d
 
 #THINKSTATS 2
+    def mean(self):
+            """Computes the mean of a PMF.
 
- def mean(self):
-        """Computes the mean of a PMF.
+            Returns:
+                float mean
+            """
+            return sum(p * x for x, p in self.Items())
 
-        Returns:
-            float mean
-        """
-        return sum(p * x for x, p in self.Items())
+    def median(self):
+            """Computes the median of a PMF.
 
- def Median(self):
-        """Computes the median of a PMF.
+            Returns:
+                float median
+            """
+            return self.MakeCdf().Percentile(50)
 
-        Returns:
-            float median
-        """
-        return self.MakeCdf().Percentile(50)
+    def var(self, mu=None):
+            """Computes the variance of a PMF.
+
+            mu: the point around which the variance is computed;
+                    if omitted, computes the mean
+
+            returns: float variance
+            """
+            if mu is None:
+                mu = self.Mean()
+
+            return sum(p * (x-mu)**2 for x, p in self.Items())
