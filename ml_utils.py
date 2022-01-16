@@ -1,3 +1,4 @@
+from tkinter import N
 import pandas as pd
 import numpy as np
 import math
@@ -5,7 +6,6 @@ import ipywidgets as widgets
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-import scipy
 plt.rcParams["figure.figsize"] = (8,8)
 
 class edaDF:
@@ -16,7 +16,7 @@ class edaDF:
         self.num = []
 
     def info(self):
-        return self.data.info()
+        return self.info()
 #DATA PREP
     def giveTarget(self):
         return self.target
@@ -33,9 +33,9 @@ class edaDF:
 #NUMERIC
     def numericstats(self, data):
         d = print('Nulls:\n\n\n', self.data.isna().sum())
-        val = self.data.value_counts().T
+        val = self.data.value_counts()
         sort = print('Value Counts:\n\n\n',val.sort_values(ascending=False))
-        desc = print('Full description:\n\n\n ', self.data.describe(include="all"))
+        desc = print('Full description:\n\n\n ', self.data.describe(include="all").T)
         return d, sort, desc
 
     def describe(self, data):
@@ -55,11 +55,10 @@ class edaDF:
         plt.show()
         return plot
         
-    def heatmap(self, data):
+    def heatmap(self, data, annot=True):
         df2 = self.data.apply(pd.to_numeric, errors='coerce')
         df2 = self.data.corr()
-        plt.rcParams["figure.figsize"] = (20,10)
-        h = sns.heatmap(df)
+        h = sns.heatmap(df2)
         plt.show()
         return h 
 
@@ -78,34 +77,45 @@ class edaDF:
         out2 = widgets.Output()
         out3 = widgets.Output()
         out4 = widgets.Output()
+        out5 = widgets.Output()
 
-        tab = widgets.Tab(children = [out1, out2, out3, out4])
+        tab = widgets.Tab(children = [out1, out2, out3, out4, out5])
         tab.set_title(0, 'Info')
         tab.set_title(1, 'Numeric Stats')
-        tab.set_title(2, 'Correlations')
-        tab.set_title(3, 'Hists')
+        tab.set_title(2, 'Pairplot')
+        tab.set_title(3, 'Heatmap')
+        tab.set_title(4, 'Histograms')
         display(tab)
 
         with out1:
-            self.data.info()
+            self.info()
 
         with out2:
-            d = print('Nulls:\n\n\n', self.data.isna().sum())
+            d = print('Nulls:\n', self.data.isna().sum())
             val = self.data.value_counts().T
-            sort = print('Value Counts:\n\n\n',val.sort_values(ascending=False))
-            desc = print('Full description:\n\n\n ', self.data.describe(include="all"))
+            
+            sort = print('\nValue Counts:\n',val.sort_values(ascending=False))
+            desc = print('\nFull description:\n ', self.data.describe(include="all"))
             d, sort, desc
         
         with out3:
-            plot = sns.pairplot(self.data, hue=None)
+            plot = sns.pairplot(self.data, hue=target)
             plt.show()
             plot
         
         with out4:
+            df2 = self.data.apply(pd.to_numeric, errors='coerce')
+            df2 = self.data.corr()
+            h = sns.heatmap(df2)
+            plt.show() 
+            h
+
+        with out5:
             h = self.data.hist()
+            plt.show()
             h
 #POST EDA
     def outliers(self, data, columnName, lower_bound, upper_bound):
-        data = data[data[columnName]> lower_bound]
-        data = data[data[columnName]< upper_bound]
-        return self.data.describe()
+        self.data = data[data[columnName]> lower_bound]
+        self.data = data[data[columnName]< upper_bound]
+        return self.describe(), self.data.hist()
